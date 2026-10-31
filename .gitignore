@@ -1,0 +1,6 @@
+archivio/
+download/
+aifa-archivio/target/
+aifa-archivio/gen/
+.DS_Store
+*.log

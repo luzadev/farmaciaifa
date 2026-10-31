@@ -1,0 +1,68 @@
+{
+    "avvertenza": "Confronto testuale sugli RCP (paragrafo 4.5) e database accademico DDInter (uso non commerciale): non sostituiscono la valutazione clinica.",
+    "ddinter": {
+        "disponibile": true,
+        "interazioni": [],
+        "non_mappati": []
+    },
+    "farmaci": [
+        {
+            "aic": "012745016",
+            "atc": "N02BE01",
+            "nome": "TACHIPIRINA",
+            "principio_attivo": "PARACETAMOLO",
+            "richiesto": "TACHIPIRINA",
+            "titolare": "AZIENDE CHIMICHE RIUNITE ANGELINI FRANCESCO A.C.R.A.F. S.P.A."
+        },
+        {
+            "aic": "027860028",
+            "atc": "J01FA10",
+            "nome": "ZITROMAX",
+            "principio_attivo": "AZITROMICINA DIIDRATO",
+            "richiesto": "ZITROMAX",
+            "titolare": "PFIZER ITALIA S.R.L."
+        }
+    ],
+    "fonti": {
+        "archivio": {
+            "aggiornato": "2026-10-29",
+            "fonte": "AIFA open data confezioni_fornitura.csv + liste classe A/H"
+        },
+        "ddinter": {
+            "aggiornato": "2026-10-29",
+            "fonte": "DDInter 2.0 (ddinter.scbdd.com), uso accademico non commerciale"
+        },
+        "rcp": {
+            "fonte": "AIFA, Riassunto delle Caratteristiche del Prodotto, paragrafo 4.5 (PDF scaricato da api.aifa.gov.it, rinnovato ogni 90 giorni)"
+        }
+    },
+    "non_trovati": [],
+    "rcp": {
+        "interazioni": [],
+        "paragrafi_4_5": [
+            {
+                "errore": null,
+                "farmaco": "TACHIPIRINA",
+                "nomi_ddinter": [
+                    "acetaminophen"
+                ],
+                "testo": "4.5 Interazioni con altri medicinali e altre forme di interazione L'assorbimento per via orale del paracetamolo dipende dalla velocità dello svuotamento gastrico. Pertanto, la somministrazione concomitante di farmaci che rallentano (ad es. anticolinergici, oppioidi) o aumentano (ad es. procinetici) la velocità dello svuotamento gastrico può determinare rispettivamente una diminuzione o un aumento della biodisponibilità del prodotto. La somministrazione concomitante di colestiramina riduce l'assorbimento del paracetamolo. Agenzia Italiana del Farmaco Documento reso disponibile da AIFA il 24/09/2026 Esula dalla competenza dell’AIFA ogni eventuale disputa concernente i diritti di proprietà industriale e la tutela brevettuale dei dati relativi all’AIC dei medicinali e, pertanto, l’Agenzia non può essere ritenuta responsabile in alcun modo di eventuali violazioni da parte del titolare dell'autorizzazione all'immissione in commercio (o titolare AIC). 3 L'assunzione contemporanea di paracetamolo e di cloramfenicolo può indurre un aumento dell’emivita del cloramfenicolo, con il rischio di elevarne la tossicità. L’uso concomitante di paracetamolo (4 g al giorno per almeno 4 giorni) con anticoagulanti orali può indurre leggere variazioni nei valori di INR. In questi casi deve essere condotto un monitoraggio più frequente dei valori di INR durante l’uso concomitante e dopo la sua interruzione. Usare con estrema cautela e sotto stretto controllo durante il trattamento cronico con farmaci che possono determinare l’induzione delle monossigenasi epatiche o in caso di esposizione a sostanze che possono avere tale effetto (per esempio rifampicina, cimetidina, antiepilettici quali glutetimmide, fenobarbital, carbamazepina). Lo stesso vale nei casi di etilismo e nei pazienti trattati con zidovudina. Si deve prestare attenzione quando paracetamolo è usato in concomitanza con flucloxacillina poiché l'assunzione concomitante è stata associata ad acidosi metabolica con gap anionico elevato a causa di acidosi piroglutamica, specialmente nei pazienti con fattori di rischio (vedere paragrafo 4.4). La somministrazione di paracetamolo può interferire con la determinazione della uricemia (mediante il metodo dell’acido fosfotungstico) e con quella della glicemia (mediante il metodo della glucosio-ossidasi- perossidasi)."
+            },
+            {
+                "errore": null,
+                "farmaco": "ZITROMAX",
+                "nomi_ddinter": [
+                    "azithromycin"
+                ],
+                "testo": "Interazioni con altri medicinali ed altre forme di interazione Sebbene l’azitromicina sia un debole inibitore del CYP450 e non interagisca in modo significativo con i substrati del CYP450, non è possibile escludere completamente l’inibizione del CYP3A4. Pertanto, si raccomanda cautela in caso di somministrazione concomitante con substrati del CYP3A4 con indice terapeutico ristretto. L’azitromicina è un inibitore del trasportatore P-glicoproteina (P-gp). La somministrazione concomitante di azitromicina con substrati della P-gp, come ad esempio digossina e colchicina, può aumentarne l’esposizione. Per i farmaci con un indice terapeutico ristretto, si consigliano cautela, monitoraggio clinico e/o terapeutico del farmaco e aggiustamento della dose, se necessario. A tale riguardo occorre tenere conto dell’emivita relativamente lunga dell’azitromicina (vedere paragrafo 5.2). Medicinali noti per prolungare l’intervallo QT L’azitromicina deve essere usata con cautela nei pazienti che assumono medicinali noti per prolungare l’intervallo QT (vedere paragrafo 4.4), come ad esempio antiaritmici di classe IA (ad es., chinidina e procainamide) e III (ad es., dofetilide, amiodarone e sotalolo), agenti antipsicotici (ad es., pimozide), antidepressivi (ad es., citalopram), fluorochinoloni (ad es., moxifloxacina e levofloxacina), cisapride, clorochina e idrossiclorochina. Le informazioni sulle interazioni farmacologiche dell’azitromicina con potenziali medicinali concomitanti sono riassunte nella tabella e nel testo seguenti. Le interazioni farmacologiche descritte si basano su studi clinici di interazione farmacologica condotti con l’azitromicina oppure, ove indicato, sono potenziali interazioni farmacologiche che possono verificarsi con l’azitromicina. Tabella 4: Interazioni farmacologiche clinicamente rilevanti tra azitromicina e altri medicinali Medicinale (area terapeutica) Interazione Effetto nel caso di esposizione Meccanismo Raccomandazione relativa alla co-somministrazione Atorvastatina (inibitore della HMG CoA reduttasi) Azitromicina 500 mg per via orale una volta al giorno per 3 giorni. Atorvastatina 10 mg per via orale una volta al giorno. Azitromicina: ND Atorvastatina: ↔ AUC ↔ Cmax L’atorvastatina è un substrato del CYP3A4 e della P-gp. Si deve prestare cautela in quanto sono stati segnalati casi post-marketing di rabdomiolisi in pazienti in trattamento concomitante con azitromicina e statine. Ciclosporina (immunosoppressore) Azitromicina: ND Ciclosporina: La ciclosporina è un substrato del CYP3A4 e della P-gp Durante e dopo il trattamento con azitromicina, è Agenzia Italiana del Farmaco Documento reso disponibile da AIFA il 26/06/2026 Esula dalla competenza dell’AIFA ogni eventuale disputa concernente i diritti di proprietà industriale e la tutela brevettuale dei dati relativi all’AIC dei medicinali e, pertanto, l’Agenzia non può essere ritenuta responsabile in alcun modo di eventuali violazioni da parte del titolare dell'autorizzazione all'immissione in commercio (o titolare AIC). 8 Azitromicina 500 mg per via orale una volta al giorno per 3 giorni. Ciclosporina 10 mg/kg per via orale in dose singola. ↔ AUC ↑Cmax 24 % con un ristretto indice terapeutico e/o una competizione per l’escrezione biliare. necessario effettuare un monitoraggio clinico e terapeutico del farmaco come appropriato. Se necessario, la dose di ciclosporina deve essere aggiustata. Colchicina (antigotta) Azitromicina: ND Colchicina: ↑ 57% AUC0-t ↑ 22% Cmax La colchicina è un substrato della P-gp con indice terapeutico ristretto. Durante e dopo il trattamento con azitromicina è necessario un monitoraggio clinico. Dabigatran (anticoagulante orale) Azitromicina: ND Previsto: ↑ Dabigatran Il dabigatran è un substrato della P-gp con indice terapeutico ristretto. Si deve usare cautela poiché i dati post-marketing suggeriscono un aumento del rischio di emorragie nei pazienti che assumono azitromicina in concomitanza con dabigatran. Digossina (glicosidi cardiaci) Azitromicina: ND Previsto: ↑ Digossina La digossina è un substrato della P-gp con un indice terapeutico ristretto. Durante e dopo il trattamento con azitromicina, è necessario il monitoraggio clinico ed eventualmente il monitoraggio dei livelli di digossina. Warfarin (anticoagulante orale) Azitromicina 500 mg per via orale una volta al giorno per 1 giorno, dopodiché 250 mg per via orale una volta al giorno per 4 giorni. Warfarin 15 mg per via orale in dose singola. Azitromicina: ND Warfarin: ND Nessuna variazione nel tempo di protrombina nello studio clinico di interazione farmacologica, ma segnalazioni post-marketing di potenziamento dell’effetto anticoagulante degli anticoagulanti orali di tipo cumarinico in caso di somministrazione concomitante con azitromicina. Non noto. Durante e dopo il trattamento con azitromicina si deve prendere in considerazione un monitoraggio più frequente del tempo di protrombina. Nota: le variazioni statisticamente significative superiori al 10% sono indicate con “↑” o “↓”, nessuna variazione con “↔”, non determinata con “ND”. Agenzia Italiana del Farmaco Documento reso disponibile da AIFA il 26/06/2026 Esula dalla competenza dell’AIFA ogni eventuale disputa concernente i diritti di proprietà industriale e la tutela brevettuale dei dati relativi all’AIC dei medicinali e, pertanto, l’Agenzia non può essere ritenuta responsabile in alcun modo di eventuali violazioni da parte del titolare dell'autorizzazione all'immissione in commercio (o titolare AIC). 9 Non è stata osservata alcuna modifica clinicamente rilevante nell’esposizione all’azitromicina o ai medicinali co-somministrati negli studi clinici che valutavano le potenziali interazioni farmacologiche dell’azitromicina con antiacidi orali (idrossido di alluminio/idrossido di magnesio), carbamazepina, cetirizina, cimetidina, efavirenz, fluconazolo, metilprednisolone, midazolam, rifabutina, sildenafil, teofillina, triazolam, trimetoprim/sulfametossazolo e zidovudina. Popolazione pediatrica Sono stati effettuati studi di interazione solo negli adulti. 4.6 Fertilità,"
+            }
+        ]
+    },
+    "scala_gravita": [
+        "grave",
+        "moderata",
+        "lieve",
+        "non classificata"
+    ],
+    "versione": "0.3.0"
+}

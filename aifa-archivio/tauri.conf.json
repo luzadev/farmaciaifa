@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Farmaci AIFA",
+  "version": "0.3.0",
+  "identifier": "eu.manxx.farmaciaifa",
+  "build": { "frontendDist": "ui" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{ "title": "Farmaci AIFA", "width": 1280, "height": 820, "minWidth": 900, "minHeight": 600 }],
+    "security": { "csp": null }
+  },
+  "bundle": { "active": false }
+}

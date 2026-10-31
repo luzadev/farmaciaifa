@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Farmaci AIFA</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --line: #e4e6eb; --text: #1b1f27; --muted: #6b7280;
+    --accent: #2563eb; --accent-2: #1d4ed8; --accent-soft: #e8efff; --ok: #15803d; --ok-soft: #dcfce7;
+    --warn: #b45309; --warn-soft: #fef3c7; --bad: #b91c1c; --bad-soft: #fee2e2; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.1);
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1115; --panel: #171a21; --line: #262a33; --text: #e6e8ee; --muted: #8b93a3;
+      --accent: #5b8def; --accent-2: #3b74e6; --accent-soft: #1b2740; --ok: #4ade80; --ok-soft: #12301c;
+      --warn: #fbbf24; --warn-soft: #3a2a08; --bad: #f87171; --bad-soft: #3b1414; --shadow: 0 1px 2px rgba(0,0,0,.4); }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font: 14px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", Roboto, sans-serif; color: var(--text); background: var(--bg);
+    display: grid; grid-template-rows: auto 1fr auto; -webkit-font-smoothing: antialiased; user-select: none; }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .brand .logo { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, var(--accent), #7c3aed); display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; }
+  .search { flex: 1; max-width: 640px; position: relative; }
+  .search input { width: 100%; height: 40px; padding: 0 40px 0 40px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--text); font-size: 15px; outline: none; transition: box-shadow .15s, border-color .15s; }
+  .search input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); background: var(--panel); }
+  .search svg { position: absolute; left: 14px; top: 12px; width: 16px; height: 16px; color: var(--muted); }
+  .search .spin { left: auto; right: 40px; display: none; }
+  .search .clear { position: absolute; right: 8px; top: 7px; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 13px; line-height: 26px; display: none; }
+  .search .clear:hover { background: var(--line); color: var(--text); }
+  .search.has-text .clear { display: block; }
+  .search.busy .spin { display: block; animation: rot 1s linear infinite; }
+  @keyframes rot { to { transform: rotate(360deg); } }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .seg button { border: 0; border-radius: 0; padding: 7px 14px; font-weight: 500; }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .pill { display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 999px; background: rgba(255,255,255,.25); font-size: 11px; text-align: center; }
+  .seg button:not(.on) .pill { background: var(--accent-soft); color: var(--accent); }
+  .ter-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  .ter-item .x { margin-left: auto; color: var(--muted); cursor: pointer; padding: 2px 8px; border-radius: 6px; } .ter-item .x:hover { background: var(--bad-soft); color: var(--bad); }
+  .hit { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+  .hit .q { color: var(--muted); margin-top: 4px; font-style: italic; user-select: text; }
+  .lvl { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; margin-right: 6px; }
+  .Major { background: var(--bad-soft); color: var(--bad); } .Moderate { background: var(--warn-soft); color: var(--warn); } .Minor { background: var(--ok-soft); color: var(--ok); } .Unknown { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+  .note { font-size: 12px; color: var(--muted); margin-top: 12px; }
+  details { margin-top: 8px; } summary { cursor: pointer; font-weight: 600; } .txt45 { white-space: pre-wrap; font-size: 12.5px; user-select: text; margin-top: 6px; }
+  .status { margin-left: auto; color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; padding: 16px 20px; min-height: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .card-h { padding: 12px 16px; border-bottom: 1px solid var(--line); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .card-h .count { color: var(--muted); font-weight: 500; }
+  .scroll { overflow: auto; min-height: 0; flex: 1; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { position: sticky; top: 0; background: var(--panel); text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  tbody td { padding: 10px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+  tbody tr { cursor: pointer; transition: background .1s; }
+  tbody tr:hover { background: var(--bg); }
+  tbody tr.sel { background: var(--accent-soft); }
+  tbody td.name { font-weight: 600; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .ok { color: var(--ok); background: var(--ok-soft); } .warn { color: var(--warn); background: var(--warn-soft); } .bad { color: var(--bad); background: var(--bad-soft); }
+  .muted { color: var(--muted); }
+  .badge.muted { background: var(--bg); border: 1px solid var(--line); font-weight: 500; }
+
+  .empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--muted); padding: 40px; }
+  .empty h2 { margin: 0 0 6px; color: var(--text); font-weight: 600; }
+  .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .chip { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); cursor: pointer; color: var(--text); }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .detail { padding: 18px 20px; }
+  .detail h1 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
+  .detail .sub { color: var(--muted); margin: 4px 0 12px; }
+  .btns { display: flex; gap: 10px; margin: 14px 0 18px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 9px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: background .1s, transform .05s; }
+  button:hover { background: var(--bg); } button:active { transform: translateY(1px); } button:disabled { opacity: .5; cursor: default; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; } button.primary:hover { background: var(--accent-2); }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; font-size: 13.5px; }
+  .kv dt { color: var(--muted); } .kv dd { margin: 0; user-select: text; }
+  .sect { margin: 18px 0 8px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .pack { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+  .pack .aic { font-family: ui-monospace, SF Mono, Menlo, monospace; color: var(--muted); }
+  .pack .tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11.5px; padding: 1px 7px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+  a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+
+  footer { display: flex; align-items: center; gap: 14px; padding: 10px 20px; background: var(--panel); border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  footer .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; margin-right: 6px; }
+  footer .dot.syncing { background: var(--warn); animation: pulse 1s infinite alternate; } @keyframes pulse { to { opacity: .3; } }
+  footer .grow { flex: 1; }
+  footer label { display: flex; align-items: center; gap: 6px; }
+  footer input[type=number] { width: 56px; font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); }
+  footer input[type=checkbox] { accent-color: var(--accent); }
+  #helpBtn { width: 34px; height: 34px; padding: 0; border-radius: 50%; font-size: 15px; font-weight: 700; color: var(--muted); }
+  #helpBtn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .overlay.open { display: flex; }
+  .modal { width: min(1000px, 92vw); height: min(760px, 88vh); background: var(--panel); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.35); display: grid; grid-template-columns: 230px 1fr; overflow: hidden; }
+  .toc { border-right: 1px solid var(--line); padding: 18px 0; overflow: auto; background: var(--bg); }
+  .toc h3 { margin: 0 18px 10px; font-size: 15px; }
+  .toc a { display: block; padding: 7px 18px; color: var(--text); font-size: 13.5px; }
+  .toc a:hover { background: var(--accent-soft); text-decoration: none; }
+  .guide { overflow: auto; padding: 8px 28px 28px; user-select: text; line-height: 1.55; }
+  .guide h2 { font-size: 18px; margin: 26px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .guide h2:first-of-type { border-top: 0; }
+  .guide h3 { font-size: 14.5px; margin: 16px 0 6px; }
+  .guide p, .guide li { font-size: 13.5px; }
+  .guide ul, .guide ol { padding-left: 20px; }
+  .guide code { font: 12.5px ui-monospace, SF Mono, Menlo, monospace; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+  .guide pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow: auto; font-size: 12.5px; }
+  .guide table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 8px 0; }
+  .guide th, .guide td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; position: static; text-transform: none; letter-spacing: 0; color: var(--text); white-space: normal; }
+  .guide th { background: var(--bg); }
+  .guide .warn-box { border-left: 4px solid var(--warn); background: var(--warn-soft); padding: 10px 12px; border-radius: 8px; margin: 10px 0; }
+  .modal-h { grid-column: 1 / -1; display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .modal-h .x { margin-left: auto; cursor: pointer; font-size: 18px; color: var(--muted); padding: 0 6px; }
+  .modal { grid-template-rows: auto 1fr; }
+  #log { width: 100%; max-height: 90px; overflow: auto; font: 12px ui-monospace, SF Mono, Menlo, monospace; background: var(--bg); border-radius: 8px; padding: 8px 10px; display: none; white-space: pre; user-select: text; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">Rx</div>Farmaci AIFA</div>
+  <div class="search" id="searchBox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" placeholder="Cerca per nome, principio attivo, azienda o codice AIC…" autofocus>
+    <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+    <button class="clear" id="qClear" title="Cancella (Esc)" tabindex="-1">✕</button>
+  </div>
+  <div class="seg" id="seg"><button class="on" data-m="locale">Archivio</button><button data-m="online">Online AIFA</button><button data-m="terapia">Terapia <span class="pill" id="nTer">0</span></button></div>
+  <div class="status" id="status">Pronto</div>
+  <button id="helpBtn" title="Guida" aria-label="Guida">?</button>
+</header>
+
+<main>
+  <section class="card">
+    <div class="card-h">Risultati <span class="count" id="count"></span></div>
+    <div class="empty" id="empty">
+      <div>
+        <h2>Cerca un farmaco</h2>
+        <div id="emptyMsg">Tutti i medicinali autorizzati, con prezzi di classe A e H: nome, principio attivo, azienda o AIC.</div>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+    <div class="scroll" id="terWrap" style="display:none">
+      <div id="terList"></div>
+      <div style="padding:12px 16px; display:flex; gap:10px; align-items:center"><button class="primary" id="verBtn">Verifica interazioni</button><button id="terClear">Svuota</button><span class="muted" id="terHint">Aggiungi farmaci dal pannello dei dettagli con "+ Terapia".</span></div>
+      <div id="terReport" style="padding:0 16px 16px"></div>
+    </div>
+    <div class="scroll" id="tableWrap" style="display:none">
+      <table><thead id="thead"></thead><tbody id="rows"></tbody></table>
+    </div>
+  </section>
+  <aside class="card">
+    <div class="scroll"><div class="detail" id="detail"><div class="empty"><div>Seleziona un farmaco per vedere dettagli, foglio illustrativo e RCP.</div></div></div></div>
+  </aside>
+</main>
+
+<footer>
+  <span><span class="dot" id="dot"></span><strong>Archivio locale</strong></span>
+  <span id="arch">…</span>
+  <span class="grow"></span>
+  <label>Aggiorna ogni <input type="number" id="every" min="0" max="365"> giorni</label>
+  <label><input type="checkbox" id="withPdf"> scarica anche tutti i PDF</label>
+  <button id="syncBtn">Aggiorna ora</button>
+  <pre id="log"></pre>
+</footer>
+
+
+<div class="overlay" id="help">
+  <div class="modal">
+    <div class="modal-h">Guida di Farmaci AIFA <span class="x" id="helpClose" title="Chiudi (Esc)">✕</span></div>
+    <nav class="toc">
+      <h3>Indice</h3>
+      <a href="#g-intro">Che cos'è</a>
+      <a href="#g-ricerca">Ricerca</a>
+      <a href="#g-dettagli">Scheda farmaco</a>
+      <a href="#g-pdf">Foglio illustrativo e RCP</a>
+      <a href="#g-terapia">Terapia e interazioni</a>
+      <a href="#g-archivio">Archivio e aggiornamenti</a>
+      <a href="#g-file">File dell'archivio</a>
+      <a href="#g-api">API HTTP</a>
+      <a href="#g-cli">Riga di comando</a>
+      <a href="#g-limiti">Limiti e avvertenze</a>
+      <a href="#g-problemi">Problemi comuni</a>
+    </nav>
+    <div class="guide">
+      <h2 id="g-intro">Che cos'è</h2>
+      <p>Farmaci AIFA è un archivio locale di tutti i medicinali autorizzati in Italia, costruito dai dati pubblici dell'Agenzia Italiana del Farmaco. Per ogni confezione mostra titolare, stato, forma, ATC, principio attivo, regime di fornitura e, per i farmaci rimborsati, classe e prezzo. Da ogni scheda si aprono il Foglio Illustrativo (FI) e il Riassunto delle Caratteristiche del Prodotto (RCP), e si possono verificare le interazioni tra i farmaci di una terapia.</p>
+      <p>Fonti usate:</p>
+      <ul>
+        <li><strong>Open data "confezioni e regime di fornitura"</strong> (drive.aifa.gov.it): tutte le confezioni autorizzate, aggiornato ogni giorno. È la base dell'archivio.</li>
+        <li><strong>Liste di classe A e H "per nome commerciale"</strong> (aifa.gov.it/liste-dei-farmaci): classe, prezzo al pubblico, gruppo di equivalenza, lista di trasparenza.</li>
+        <li><strong>API pubblica di medicinali.aifa.gov.it</strong>: ricerca online in tempo reale e download dei PDF.</li>
+        <li><strong>DDInter</strong> (ddinter.scbdd.com) e <strong>indice ATC dell'OMS</strong>: database delle interazioni e traduzione dei principi attivi.</li>
+      </ul>
+
+      <h2 id="g-ricerca">Ricerca</h2>
+      <p>Scrivi nella barra in alto: nome commerciale, principio attivo, azienda o codice AIC. Più parole si combinano in AND ("amoxicillina 1 g" trova le confezioni che contengono entrambe).</p>
+      <h3>Archivio</h3>
+      <p>Ricerca istantanea nell'archivio locale, a ogni tasto. Mostra fino a 500 risultati con nome, confezione, principio attivo, titolare, prezzo e classe. Funziona senza connessione.</p>
+      <h3>Online AIFA</h3>
+      <p>Interroga l'API di medicinali.aifa.gov.it (Invio o pulsante Cerca). Utile per vedere lo stato aggiornato al momento, le confezioni con stato amministrativo e regime, e i farmaci non ancora presenti nell'archivio locale.</p>
+      <h3>Badge della colonna Classe</h3>
+      <table><tr><th>Badge</th><th>Significato</th></tr>
+        <tr><td>A</td><td>Rimborsato dal SSN, prezzo dalla lista di classe A</td></tr>
+        <tr><td>H</td><td>Uso ospedaliero, prezzo dalla lista di classe H</td></tr>
+        <tr><td>C / altro</td><td>Non rimborsato, da banco, omeopatico o non presente nelle liste: nessun prezzo</td></tr></table>
+
+      <h2 id="g-dettagli">Scheda farmaco</h2>
+      <p>Cliccando una riga si apre a destra la scheda con: prezzo al pubblico (se rimborsato), principio attivo, ATC, titolare, codice AIC, regime di fornitura, procedura di autorizzazione, gruppo e gruppo di equivalenza. I badge segnalano la classe, la presenza nella lista di trasparenza, lo stato "sospesa", l'importazione parallela e i casi in cui la confezione non è più in banca dati (nessun PDF disponibile).</p>
+      <p>Pulsanti della scheda:</p>
+      <ul>
+        <li><strong>Foglio illustrativo</strong> e <strong>RCP</strong>: aprono il PDF.</li>
+        <li><strong>Interazioni (4.5)</strong>: mostra il paragrafo 4.5 dell'RCP ("Interazioni con altri medicinali") dentro la scheda.</li>
+        <li><strong>+ Terapia</strong>: aggiunge il farmaco alla terapia da verificare.</li>
+      </ul>
+
+      <h2 id="g-pdf">Foglio illustrativo e RCP</h2>
+      <p>Il PDF viene scaricato da AIFA la prima volta e salvato nell'archivio in <code>pdf/&lt;aic6&gt;_&lt;NOME&gt;/FI.pdf</code> o <code>RCP.pdf</code>, poi aperto con il lettore predefinito del sistema. Le volte successive si apre la copia locale; viene riscaricato se ha più di 90 giorni. Un solo documento copre tutte le confezioni e i dosaggi dello stesso medicinale. Per le importazioni parallele AIFA fornisce i documenti del prodotto originale.</p>
+      <p>Con l'opzione "scarica anche tutti i PDF" in basso, l'aggiornamento scarica in blocco FI e RCP di tutti i medicinali (circa 25.000 file, diversi GB, solo la prima volta).</p>
+
+      <h2 id="g-terapia">Terapia e interazioni</h2>
+      <ol>
+        <li>Cerca un farmaco, apri la scheda, premi <strong>+ Terapia</strong>. Ripeti per ogni farmaco (il contatore nel selettore in alto si aggiorna).</li>
+        <li>Apri la scheda <strong>Terapia</strong>: puoi togliere singoli farmaci (✕) o svuotare la lista.</li>
+        <li>Premi <strong>Verifica interazioni</strong>. L'app scarica gli RCP mancanti, estrae i paragrafi 4.5 e consulta DDInter: qualche secondo per farmaco la prima volta.</li>
+      </ol>
+      <p>Il rapporto ha due parti indipendenti:</p>
+      <h3>Database DDInter</h3>
+      <p>Coppie di farmaci con gravità: <strong>Grave</strong>, <strong>Moderata</strong>, <strong>Lieve</strong>, <strong>Non classificata</strong>. Tra parentesi i nomi inglesi usati per il confronto. DDInter è in inglese: i principi attivi italiani vengono tradotti tramite il codice ATC e regole di corrispondenza; i farmaci che non si riescono a mappare sono elencati come "Non trovati in DDInter" e non partecipano a questa parte del confronto.</p>
+      <h3>Paragrafo 4.5 degli RCP</h3>
+      <p>Per ogni farmaco della terapia, l'app cerca nel suo paragrafo 4.5 i principi attivi degli altri farmaci e mostra il passaggio di testo. Sotto, i paragrafi 4.5 completi, espandibili, con eventuali errori (RCP non disponibile, paragrafo non trovato).</p>
+      <div class="warn-box">Il confronto sugli RCP è testuale: trova un principio attivo citato per nome ("warfarin") ma non una classe ("anticoagulanti orali", "inibitori del CYP3A4"). DDInter è un database accademico per uso non commerciale. Nessuna delle due fonti sostituisce la valutazione clinica né una banca dati con licenza.</div>
+
+      <h2 id="g-archivio">Archivio e aggiornamenti</h2>
+      <p>La barra in basso mostra la cartella dell'archivio, la data dell'ultimo aggiornamento e i conteggi. Impostazioni:</p>
+      <ul>
+        <li><strong>Aggiorna ogni N giorni</strong>: all'avvio, se l'ultimo aggiornamento è più vecchio di N giorni, l'aggiornamento parte da solo. Con 0 è solo manuale.</li>
+        <li><strong>Scarica anche tutti i PDF</strong>: vedi sopra.</li>
+        <li><strong>Aggiorna ora</strong>: forza l'aggiornamento. Il log mostra l'avanzamento; la ricerca online resta utilizzabile, quella locale usa i dati vecchi finché non finisce.</li>
+      </ul>
+      <p>Un aggiornamento scarica circa 85 MB (open data + liste) e, ogni 30 giorni, DDInter e l'indice ATC (13 MB). Senza PDF dura 1-2 minuti. Per interrompere un aggiornamento in corso si chiude l'app: nessun dato viene corrotto, l'archivio precedente resta valido.</p>
+      <p>Cartella predefinita: <code>~/ArchivioAIFA</code>. Per usarne un'altra, avvia l'app con il percorso come argomento: <code>aifa-gui /percorso/archivio</code>.</p>
+
+      <h2 id="g-file">File dell'archivio</h2>
+      <table><tr><th>File</th><th>Contenuto</th></tr>
+        <tr><td><code>farmaci.csv</code></td><td>Tutte le confezioni, separatore <code>;</code>: aic, aic6, nome, confezione, titolare, stato, procedura, forma, atc, principio_attivo, fornitura, classe, prezzo_pubblico, gruppo, gruppo_equivalenza, lista_trasparenza, fi_pdf, rcp_pdf, fi_url, rcp_url. Apribile con Excel o Numbers.</td></tr>
+        <tr><td><code>archivio.json</code></td><td>Stessi dati in JSON, usati dall'app e dall'API.</td></tr>
+        <tr><td><code>pdf/</code></td><td>Una cartella per medicinale con <code>FI.pdf</code>, <code>RCP.pdf</code> e <code>RCP.txt</code> (testo estratto per le interazioni).</td></tr>
+        <tr><td><code>ddinter.csv</code>, <code>atc.csv</code></td><td>Database interazioni e indice ATC.</td></tr>
+        <tr><td><code>state.json</code></td><td>Data ultimo aggiornamento, conteggi, liste usate, impostazioni.</td></tr></table>
+
+      <h2 id="g-api">API HTTP</h2>
+      <p>Il programma <code>aifa-api</code> espone l'archivio e la verifica delle interazioni ad altri programmi, in JSON:</p>
+      <pre>aifa-api --dir /percorso/archivio                 # http://127.0.0.1:8787
+aifa-api --dir /percorso/archivio --bind 0.0.0.0:8787   # raggiungibile dalla rete</pre>
+      <table><tr><th>Richiesta</th><th>Risposta</th></tr>
+        <tr><td><code>GET /</code></td><td>elenco endpoint</td></tr>
+        <tr><td><code>GET /cerca?q=testo</code></td><td>ricerca nell'archivio, max 100 risultati</td></tr>
+        <tr><td><code>GET /farmaco/&lt;AIC&gt;</code></td><td>scheda della confezione</td></tr>
+        <tr><td><code>GET /interazioni?f=026089019&amp;f=ZITROMAX&amp;f=coumadin</code></td><td>verifica interazioni (almeno 2 farmaci, per AIC, nome o AIC6)</td></tr>
+        <tr><td><code>POST /interazioni</code> con body <code>{"farmaci": ["AUGMENTIN", "COUMADIN"]}</code></td><td>come sopra</td></tr></table>
+      <p>La risposta di <code>/interazioni</code> contiene: <code>farmaci</code> riconosciuti, <code>non_trovati</code>, <code>ddinter.interazioni</code> (a, b, nome_a, nome_b, livello, gravita), <code>ddinter.non_mappati</code>, <code>rcp.interazioni</code> (a, b, componente, testo), <code>rcp.paragrafi_4_5</code> e <code>avvertenza</code>. Codici: 200 ok, 400 meno di 2 farmaci o JSON non valido, 404 farmaci non riconosciuti. CORS aperto, nessuna autenticazione: in rete va protetto con un proxy.</p>
+      <pre>import requests
+r = requests.post("http://127.0.0.1:8787/interazioni", json={"farmaci": ["AUGMENTIN", "COUMADIN"]}).json()
+for i in r["ddinter"]["interazioni"]:
+    print(i["gravita"], i["a"], "+", i["b"])</pre>
+
+      <h2 id="g-cli">Riga di comando</h2>
+      <p><code>aifa-cli</code> usa lo stesso motore senza interfaccia, utile per cron o script:</p>
+      <pre>aifa-cli sync  --dir /percorso/archivio [--every GG] [--no-pdf] [--force] [--workers N] [--pdf-max-age GG]
+aifa-cli watch --dir /percorso/archivio --every 7      # resta attivo e aggiorna ogni 7 giorni
+aifa-cli interazioni --dir /percorso/archivio 026089019 ZITROMAX COUMADIN</pre>
+      <p>Esempio cron notturno: <code>0 3 * * * /percorso/aifa-cli sync --dir /percorso/archivio --every 7 --no-pdf</code></p>
+
+      <h2 id="g-limiti">Limiti e avvertenze</h2>
+      <ul>
+        <li>Circa 180 confezioni presenti nelle liste prezzi non sono più in banca dati AIFA: compaiono con prezzo ma senza PDF.</li>
+        <li>I prezzi sono quelli delle liste AIFA alla data indicata nel nome del file, non quelli praticati in farmacia.</li>
+        <li>Gli omeopatici (circa 74.000 confezioni) sono inclusi e possono affollare le ricerche per nome generico.</li>
+        <li>L'estrazione del testo dagli RCP dipende dalla qualità del PDF: in rari casi il paragrafo 4.5 non viene individuato.</li>
+        <li>La traduzione dei principi attivi per DDInter non copre elettroliti, soluzioni, insuline e alcune associazioni.</li>
+        <li>Le informazioni hanno scopo informativo e documentale. Le decisioni terapeutiche spettano al medico e al farmacista.</li>
+      </ul>
+
+      <h2 id="g-problemi">Problemi comuni</h2>
+      <table><tr><th>Sintomo</th><th>Causa e rimedio</th></tr>
+        <tr><td>"Archivio vuoto"</td><td>Non è mai stato fatto un aggiornamento: premi "Aggiorna ora".</td></tr>
+        <tr><td>"FI non disponibile su AIFA" / "RCP non disponibile"</td><td>AIFA non ha il documento per quel medicinale, oppure manca la connessione.</td></tr>
+        <tr><td>"Non in banca dati AIFA: nessun PDF"</td><td>Confezione presente solo nel listino prezzi.</td></tr>
+        <tr><td>"DDInter non ancora scaricato"</td><td>Esegui "Aggiorna ora": DDInter viene scaricato durante l'aggiornamento.</td></tr>
+        <tr><td>"paragrafo 4.5 non trovato nell'RCP"</td><td>Il PDF non ha un paragrafo 4.5 riconoscibile: apri l'RCP e consultalo a mano.</td></tr>
+        <tr><td>L'aggiornamento sembra fermo</td><td>Il download da AIFA può essere lento: il log in basso mostra l'avanzamento. Chiudere l'app lo interrompe senza danni.</td></tr></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const { invoke } = window.__TAURI__.core;
+const { listen } = window.__TAURI__.event;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let mode = 'locale', results = [], selected = -1, archivioVuoto = true, terapia = [];
+
+const HEAD = { locale: ['Nome', 'Confezione', 'Principio attivo', 'Titolare', 'Prezzo', 'Classe'], online: ['Nome', 'Forma / dosaggio', 'Titolare', 'Stato'] };
+const classeBadge = v => v.classe ? `<span class="badge ${v.classe === 'A' ? 'ok' : 'warn'}">${esc(v.classe)}</span>` : '<span class="badge muted">C / altro</span>';
+function statoF(f) { return f.revocato ? ['bad','Revocato'] : f.in_commercio ? ['ok','In commercio'] : ['warn','Non in commercio']; }
+
+function setMode(m) {
+  mode = m; results = []; selected = -1;
+  for (const b of $('seg').children) b.classList.toggle('on', b.dataset.m === m);
+  $('terWrap').style.display = m === 'terapia' ? '' : 'none';
+  if (m === 'terapia') { $('empty').style.display = 'none'; $('tableWrap').style.display = 'none'; $('count').textContent = ''; renderTerapia(); renderDetail(); return; }
+  $('emptyMsg').textContent = m === 'locale' ? (archivioVuoto ? 'Archivio vuoto: premi "Aggiorna ora" in basso per scaricare i dati AIFA.' : 'Tutti i medicinali autorizzati, con prezzi di classe A e H: nome, principio attivo, azienda o AIC.')
+                                             : 'Banca dati AIFA in tempo reale (tutte le classi): nome, principio attivo, azienda o AIC.';
+  render(); if ($('q').value.trim()) cerca();
+}
+
+async function cerca(q) {
+  q = (q ?? $('q').value).trim(); if (!q) return;
+  $('q').value = q; $('searchBox').classList.add('has-text'); $('searchBox').classList.add('busy'); $('status').textContent = `Cerco "${q}"…`;
+  try {
+    results = mode === 'locale' ? await invoke('cerca_locale', { query: q }) : await invoke('cerca_online', { query: q });
+    selected = -1;
+    $('status').textContent = results.length ? `${results.length} risultati${results.length === 500 ? ' (mostro i primi 500)' : ''}` : 'Nessun risultato';
+    render();
+  } catch (e) { $('status').textContent = 'Errore: ' + e; }
+  $('searchBox').classList.remove('busy');
+}
+
+function render() {
+  $('thead').innerHTML = '<tr>' + HEAD[mode].map(h => `<th>${h}</th>`).join('') + '</tr>';
+  $('count').textContent = results.length ? `(${results.length})` : '';
+  $('empty').style.display = results.length ? 'none' : ''; $('tableWrap').style.display = results.length ? '' : 'none';
+  $('rows').innerHTML = results.map((f, i) => {
+    const cls = i === selected ? 'sel' : '';
+    if (mode === 'locale') return `<tr class="${cls}" data-i="${i}"><td class="name">${esc(f.nome)}</td><td>${esc(f.denominazione)}</td><td>${esc(f.principio)}</td><td class="muted">${esc(f.titolare)}</td><td>${f.prezzo ? esc(f.prezzo) + ' €' : '<span class="muted">—</span>'}</td><td>${classeBadge(f)}</td></tr>`;
+    const [c, t] = statoF(f);
+    return `<tr class="${cls}" data-i="${i}"><td class="name">${esc(f.nome)}</td><td>${esc(f.forma)}</td><td class="muted">${esc(f.titolare)}</td><td><span class="badge ${c}">${t}</span></td></tr>`;
+  }).join('');
+  renderDetail();
+}
+
+function renderDetail() {
+  const f = results[selected];
+  if (!f) { $('detail').innerHTML = '<div class="empty"><div>Seleziona un farmaco per vedere dettagli, foglio illustrativo e RCP.</div></div>'; return; }
+  const btns = `<div class="btns"><button class="primary" id="fi">Foglio illustrativo</button><button id="rcp">RCP</button><button id="int45">Interazioni (4.5)</button><button id="addTer">+ Terapia</button></div><div id="sez45"></div>`;
+  if (mode === 'locale') {
+    const sospesa = f.stato && f.stato !== 'Autorizzata';
+    $('detail').innerHTML = `
+      <h1>${esc(f.nome)}</h1>
+      <div class="sub">${esc(f.denominazione)}${f.forma ? ' · ' + esc(f.forma) : ''}</div>
+      ${classeBadge(f)} ${f.trasparenza ? '<span class="badge ok">Lista di trasparenza</span>' : ''} ${sospesa ? `<span class="badge bad">${esc(f.stato)}</span>` : ''} ${f.procedura === 'Importazione Parallela' ? '<span class="badge warn">Importazione parallela</span>' : ''} ${f.sis ? '' : '<span class="badge bad">Non in banca dati AIFA: nessun PDF</span>'}
+      ${btns}
+      <dl class="kv">
+        ${f.prezzo ? `<dt>Prezzo al pubblico</dt><dd><strong>${esc(f.prezzo)} €</strong></dd>` : ''}
+        <dt>Principio attivo</dt><dd>${esc(f.principio)}</dd>
+        ${f.atc ? `<dt>ATC</dt><dd>${esc(f.atc)}</dd>` : ''}
+        <dt>Titolare AIC</dt><dd>${esc(f.titolare)}</dd>
+        <dt>Codice AIC</dt><dd>${esc(f.aic)}</dd>
+        ${f.fornitura ? `<dt>Regime di fornitura</dt><dd>${esc(f.fornitura)}</dd>` : ''}
+        ${f.procedura ? `<dt>Procedura</dt><dd>${esc(f.procedura)}</dd>` : ''}
+        ${f.gruppo ? `<dt>Gruppo</dt><dd>${esc(f.gruppo)}</dd>` : ''}
+        ${f.gruppo_eq ? `<dt>Gruppo equivalenza</dt><dd>${esc(f.gruppo_eq)}</dd>` : ''}
+      </dl>`;
+  } else {
+    const [c, t] = statoF(f);
+    $('detail').innerHTML = `
+      <h1>${esc(f.nome)}</h1>
+      <div class="sub">${esc(f.forma)}</div>
+      <span class="badge ${c}">${t}</span> ${f.tipo_aut === 'P' ? '<span class="badge warn">Importazione parallela</span>' : ''}
+      ${btns}
+      <dl class="kv">
+        <dt>Titolare</dt><dd>${esc(f.titolare)}</dd>
+        <dt>Principi attivi</dt><dd>${esc(f.principi.replaceAll(';', ', '))}</dd>
+        <dt>ATC</dt><dd>${esc(f.atc.replaceAll(';', ', '))}</dd>
+        <dt>Via</dt><dd>${esc(f.vie.replaceAll(';', ', ').toLowerCase())}</dd>
+        <dt>Codice AIC6</dt><dd>${f.aic6}</dd>
+      </dl>
+      <div class="sect">Confezioni</div>
+      ${f.confezioni.map(p => `<div class="pack">${esc(p.nome)}<div class="tags"><span class="tag aic">AIC ${esc(p.aic)}</span>${p.classe ? `<span class="tag">classe ${esc(p.classe)}</span>` : ''}${p.regime ? `<span class="tag">${esc(p.regime)}</span>` : ''}<span class="tag">${p.in_commercio ? 'in commercio' : esc(p.stato).toLowerCase()}</span></div></div>`).join('')}
+      <div class="sect">Collegamenti</div>
+      <a href="https://medicinali.aifa.gov.it/it/#/it/dettaglio/${esc(f.id)}" target="_blank">Scheda su medicinali.aifa.gov.it</a>`;
+  }
+  const doc = { pdf_sis: f.pdf_sis, pdf_aic6: f.pdf_aic6, nome: f.nome };
+  $('fi').onclick = () => apri(doc, 'FI'); $('rcp').onclick = () => apri(doc, 'RCP');
+  $('int45').onclick = async () => { $('sez45').innerHTML = '<div class="muted">Estraggo il paragrafo 4.5…</div>'; try { const t = await invoke('sezione_interazioni', { doc }); $('sez45').innerHTML = `<details open><summary>Paragrafo 4.5 dell'RCP</summary><div class="txt45">${esc(t)}</div></details>`; } catch (e) { $('sez45').innerHTML = `<div class="badge bad">${esc(e)}</div>`; } };
+  $('addTer').onclick = () => { const it = { nome: f.nome, principio: mode === 'locale' ? f.principio : f.principi.replaceAll(';', '/'), atc: (f.atc || '').split(';')[0], pdf_sis: f.pdf_sis, pdf_aic6: f.pdf_aic6 };
+    if (!terapia.some(t => t.pdf_aic6 === it.pdf_aic6)) terapia.push(it); $('nTer').textContent = terapia.length; $('status').textContent = `${f.nome} aggiunto alla terapia (${terapia.length})`; };
+}
+
+function renderTerapia() {
+  $('nTer').textContent = terapia.length;
+  $('terList').innerHTML = terapia.map((t, i) => `<div class="ter-item"><strong>${esc(t.nome)}</strong><span class="muted">${esc(t.principio)}</span><span class="x" data-i="${i}">✕</span></div>`).join('') || '<div class="empty"><div>Nessun farmaco in terapia.<br>Cerca un farmaco e premi "+ Terapia" nel pannello dei dettagli.</div></div>';
+  $('verBtn').disabled = terapia.length < 2; $('terHint').style.display = terapia.length < 2 ? '' : 'none';
+}
+$('terList').onclick = e => { if (e.target.dataset.i !== undefined) { terapia.splice(+e.target.dataset.i, 1); $('terReport').innerHTML = ''; renderTerapia(); } };
+$('terClear').onclick = () => { terapia = []; $('terReport').innerHTML = ''; renderTerapia(); };
+$('verBtn').onclick = async () => {
+  $('verBtn').disabled = true; $('terReport').innerHTML = '<div class="muted">Scarico gli RCP, estraggo i paragrafi 4.5 e consulto DDInter…</div>';
+  try {
+    const r = await invoke('verifica_terapia', { items: terapia });
+    const lvlIt = { Major: 'Grave', Moderate: 'Moderata', Minor: 'Lieve', Unknown: 'Non classificata' };
+    let h = '<div class="sect">Database DDInter</div>';
+    if (!r.ddinter_disponibile) h += '<div class="muted">DDInter non ancora scaricato: esegui "Aggiorna ora".</div>';
+    else if (!r.ddinter.length) h += '<div class="muted">Nessuna interazione nota in DDInter tra i farmaci mappati.</div>';
+    else h += r.ddinter.map(x => `<div class="hit"><span class="lvl ${x.livello}">${lvlIt[x.livello] || x.livello}</span><strong>${esc(x.a)}</strong> + <strong>${esc(x.b)}</strong> <span class="muted">(${esc(x.nome_a)} · ${esc(x.nome_b)})</span></div>`).join('');
+    if (r.non_mappati.length) h += `<div class="note">Non trovati in DDInter: ${r.non_mappati.map(esc).join(', ')}</div>`;
+    h += '<div class="sect">Paragrafo 4.5 degli RCP (AIFA)</div>';
+    h += r.rcp.length ? r.rcp.map(x => `<div class="hit"><strong>${esc(x.a)}</strong> cita <strong>${esc(x.b)}</strong> <span class="muted">(${esc(x.componente)})</span><div class="q">${esc(x.testo)}</div></div>`).join('')
+                      : '<div class="muted">Nessun RCP cita per nome i principi attivi degli altri farmaci.</div>';
+    h += r.sezioni.map(s => `<details><summary>${esc(s.nome)} ${s.inglese.length ? '<span class="muted">· DDInter: ' + s.inglese.map(esc).join(', ') + '</span>' : ''}${s.errore ? ' <span class="badge bad">' + esc(s.errore) + '</span>' : ''}</summary>${s.testo ? `<div class="txt45">${esc(s.testo)}</div>` : ''}</details>`).join('');
+    h += '<div class="note">Il confronto sugli RCP è testuale: trova i principi attivi citati per nome, non le classi ("anticoagulanti", "inibitori del CYP3A4"). DDInter (ddinter.scbdd.com) è un database accademico, uso non commerciale. Nessuna delle due fonti sostituisce la valutazione clinica.</div>';
+    $('terReport').innerHTML = h;
+  } catch (e) { $('terReport').innerHTML = `<div class="badge bad">${esc(e)}</div>`; }
+  $('verBtn').disabled = false;
+};
+
+async function apri(doc, tipo) {
+  $('status').textContent = `Apro ${tipo} di ${doc.nome}…`;
+  try { const p = await invoke('apri_pdf', { doc, tipo }); $('status').textContent = 'Aperto ' + p; }
+  catch (e) { $('status').textContent = 'Errore: ' + e; }
+}
+
+async function archivio() {
+  const st = await invoke('archivio');
+  const s = st.settings ?? {};
+  $('every').value = s.every ?? 7; $('withPdf').checked = !!s.with_pdf;
+  const days = st.last_sync ? Math.floor((st.now - st.last_sync) / 86400) : null;
+  archivioVuoto = !st.caricate;
+  $('arch').textContent = st.dir + ' · ' + (days === null ? 'mai aggiornato' : `aggiornato ${days === 0 ? 'oggi' : days + ' giorni fa'} · ${st.medicinali ?? 0} medicinali, ${st.confezioni ?? 0} confezioni (${st.rimborsate ?? 0} con prezzo A/H)`);
+  setSyncing(st.syncing);
+  if (mode === 'locale' && !results.length) setMode('locale');
+  return st;
+}
+function setSyncing(on) { $('dot').classList.toggle('syncing', on); $('syncBtn').disabled = on; $('syncBtn').textContent = on ? 'Aggiornamento in corso…' : 'Aggiorna ora'; }
+async function aggiorna() { $('log').style.display = 'block'; $('log').textContent = ''; try { await invoke('aggiorna'); setSyncing(true); } catch (e) { $('status').textContent = e; } }
+
+function clearSearch() { $('q').value = ''; results = []; selected = -1; $('searchBox').classList.remove('has-text'); if (mode !== 'terapia') render(); $('status').textContent = 'Pronto'; $('q').focus(); }
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') cerca(); if (e.key === 'Escape') clearSearch(); });
+$('q').addEventListener('input', () => { $('searchBox').classList.toggle('has-text', !!$('q').value); if (mode === 'locale') { if ($('q').value.trim()) cerca(); else clearSearch(); } });
+$('qClear').onclick = clearSearch;
+$('rows').addEventListener('click', e => { const tr = e.target.closest('tr'); if (!tr) return; selected = +tr.dataset.i; render(); });
+$('seg').addEventListener('click', e => { if (e.target.dataset.m) setMode(e.target.dataset.m); });
+$('every').onchange = $('withPdf').onchange = () => invoke('salva_impostazioni', { every: +$('every').value, withPdf: $('withPdf').checked });
+$('syncBtn').onclick = aggiorna;
+$('helpBtn').onclick = () => $('help').classList.add('open');
+$('helpClose').onclick = () => $('help').classList.remove('open');
+$('help').addEventListener('click', e => { if (e.target === $('help')) $('help').classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('help').classList.remove('open'); });
+document.querySelector('.toc').addEventListener('click', e => { if (e.target.tagName === 'A') { e.preventDefault(); document.querySelector(e.target.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+$('chips').innerHTML = ['Augmentin', 'amoxicillina', 'Tachipirina', 'ibuprofene', 'Pfizer'].map(c => `<span class="chip">${c}</span>`).join('');
+$('chips').onclick = e => { if (e.target.classList.contains('chip')) cerca(e.target.textContent); };
+listen('sync-log', e => { $('log').style.display = 'block'; $('log').textContent += e.payload + '\n'; $('log').scrollTop = 1e9; });
+listen('sync-done', () => { archivio(); $('status').textContent = 'Archivio aggiornato'; if ($('q').value.trim()) cerca(); });
+
+archivio().then(st => { const ev = st.settings?.every ?? 7; if (ev > 0 && st.last_sync && st.now - st.last_sync > ev * 86400 && !st.syncing) aggiorna(); });
+</script>
+</body>
+</html>

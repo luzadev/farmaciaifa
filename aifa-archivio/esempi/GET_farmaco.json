@@ -1,0 +1,21 @@
+{
+    "aic": "026089019",
+    "aic6": 26089,
+    "atc": "J01CR02",
+    "classe": "A",
+    "denominazione": "875 mg/125 mg compresse rivestite  con  film>  12 compresse in blister PVC/AL/PA-AL,",
+    "forma": "Compressa rivestita con film",
+    "fornitura": "Medicinali soggetti a prescrizione medica",
+    "gruppo": "AMOXICILLINA+ACIDO CLAVULANICO 875+125MG 12 UNITA' USO ORALE",
+    "gruppo_eq": "CJA",
+    "nome": "AUGMENTIN",
+    "pdf_aic6": 26089,
+    "pdf_sis": 200,
+    "prezzo": "10,20",
+    "principio": "AMOXICILLINA/ACIDO CLAVULANICO",
+    "procedura": "Procedura Nazionale",
+    "sis": 200,
+    "stato": "Autorizzata",
+    "titolare": "GLAXOSMITHKLINE S.P.A.",
+    "trasparenza": true
+}

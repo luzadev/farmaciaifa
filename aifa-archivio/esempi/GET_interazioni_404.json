@@ -1,0 +1,17 @@
+{
+    "codice": "farmaci_non_trovati",
+    "errore": "meno di 2 farmaci riconosciuti",
+    "farmaci": [
+        {
+            "aic": "026089019",
+            "atc": "J01CR02",
+            "nome": "AUGMENTIN",
+            "principio_attivo": "AMOXICILLINA/ACIDO CLAVULANICO",
+            "richiesto": "AUGMENTIN",
+            "titolare": "GLAXOSMITHKLINE S.P.A."
+        }
+    ],
+    "non_trovati": [
+        "PIPPOXYZ"
+    ]
+}

@@ -1,0 +1,31 @@
+[package]
+name = "aifa-archivio"
+version = "0.3.0"
+edition = "2021"
+default-run = "aifa-gui"
+
+[lib]
+name = "aifa_archivio"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+ureq = { version = "2.10", features = ["json"] }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+pdf-extract = "0.9"
+tiny_http = "0.12"
+
+[[bin]]
+name = "aifa-gui"
+path = "src/bin/aifa-gui.rs"
+
+[[bin]]
+name = "aifa-api"
+path = "src/bin/aifa-api.rs"
+
+[[bin]]
+name = "aifa-cli"
+path = "src/bin/aifa-cli.rs"

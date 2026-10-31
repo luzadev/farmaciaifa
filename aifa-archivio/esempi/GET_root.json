@@ -1,0 +1,25 @@
+{
+    "confezioni": 160489,
+    "endpoint": {
+        "GET /cerca?q=": "ricerca (nome, principio attivo, titolare, AIC)",
+        "GET /farmaco/<AIC>": "scheda confezione",
+        "GET /interazioni?f=<AIC|nome|principio|ATC>&f=...": "verifica interazioni (2-20 farmaci)",
+        "GET /rcp/<AIC>": "paragrafi 4.1-4.9 dell'RCP",
+        "POST /interazioni": "body {\"farmaci\": [\"AIC o nome\", ...]}"
+    },
+    "fonti": {
+        "archivio": {
+            "aggiornato": "2026-10-29",
+            "fonte": "AIFA open data confezioni_fornitura.csv + liste classe A/H"
+        },
+        "ddinter": {
+            "aggiornato": "2026-10-29",
+            "fonte": "DDInter 2.0 (ddinter.scbdd.com), uso accademico non commerciale"
+        },
+        "rcp": {
+            "fonte": "AIFA, Riassunto delle Caratteristiche del Prodotto, paragrafo 4.5 (PDF scaricato da api.aifa.gov.it, rinnovato ogni 90 giorni)"
+        }
+    },
+    "servizio": "aifa-archivio API",
+    "versione": "0.3.0"
+}
